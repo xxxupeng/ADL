@@ -9,4 +9,3 @@
 </h3>
 
 coming soon...
-- :trophy: **SOTA performance**:
