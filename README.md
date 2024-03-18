@@ -4,7 +4,7 @@
 </div>
 
 <h3 align="center">
-  <a href="">arXiv</a> |
+  <a href="https://arxiv.org/abs/2306.15612">arXiv</a> |
   <a href="https://xxxupeng.github.io/video/cvpr2024.mp4">Video</a>
 </h3>
 
