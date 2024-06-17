@@ -66,3 +66,15 @@ Change `estimator` args. for different disparity estimators:
 - argmax: argmax
 - SME: **S**ingle-**M**odal disparity **E**stimator
 - DME: **D**ominant-**M**odal disparity **E**stimator
+
+## Citation
+```
+@InProceedings{Xu_2024_CVPR,
+    author    = {Xu, Peng and Xiang, Zhiyu and Qiao, Chengyu and Fu, Jingyun and Pu, Tianyu},
+    title     = {Adaptive Multi-Modal Cross-Entropy Loss for Stereo Matching},
+    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+    month     = {June},
+    year      = {2024},
+    pages     = {5135-5144}
+}
+```
