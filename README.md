@@ -30,6 +30,10 @@ Despite the great success of deep learning in stereo matching, recovering accura
 
 Download the datasets, and change the `datapath` args. in `./scripts/sceneflow.sh` or `./scripts/kitti.sh`.
 
+## Pretrained Models
+
+Pretrained models can be downloaded from [google drive](https://drive.google.com/drive/folders/1ygvko430bkbL25HIQFOD_0987FRj1GuD?usp=drive_link).
+
 
 ## Training
 
