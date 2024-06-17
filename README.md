@@ -32,7 +32,7 @@ Download the datasets, and change the `datapath` args. in `./scripts/sceneflow.s
 
 ## Pretrained Models
 
-Pretrained models can be downloaded from [google drive](https://drive.google.com/drive/folders/1ygvko430bkbL25HIQFOD_0987FRj1GuD?usp=drive_link).
+Pretrained models can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1ygvko430bkbL25HIQFOD_0987FRj1GuD?usp=drive_link).
 
 
 ## Training
@@ -78,3 +78,7 @@ Change `estimator` args. for different disparity estimators:
     pages     = {5135-5144}
 }
 ```
+
+## Acknowledgement
+
+This project is based on the [PSMNet](https://github.com/JiaRenChang/PSMNet), [GwcNet](https://github.com/xy-guo/GwcNet), and [GANet](https://github.com/feihuzhang/GANet), we thank the original authors for their excellent works.
