@@ -5,8 +5,8 @@
 
 <h3 align="center">
   <a href="https://arxiv.org/abs/2306.15612">arXiv</a> |
-  <a href="https://xxxupeng.github.io/assets/poster.pdf">Poster</a> |
-  <a href="https://xxxupeng.github.io/video/cvpr2024.mp4">Video</a>
+  <a href="https://xxxupeng.github.io/projects/cvpr2024/poster.pdf">Poster</a> |
+  <a href="https://xxxupeng.github.io/projects/cvpr2024/demo.mp4">Video</a>
 </h3>
 
 ## Abstract
