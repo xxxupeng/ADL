@@ -8,7 +8,6 @@ import math
 import numpy as np
 
 
-
 # soft-argmax
 class softargmax_estimator(nn.Module):
     def __init__(self, maxdisp):
@@ -22,7 +21,6 @@ class softargmax_estimator(nn.Module):
         return out
 
 
-
 # argmax
 class argmax_estimator(nn.Module):
     def __init__(self, maxdisp):
@@ -31,9 +29,6 @@ class argmax_estimator(nn.Module):
     def forward(self, x):
         out = torch.argmax(x,1, keepdim=True)
         return out
-
-
-
 
 
 # single-modal disparity estimator
@@ -123,3 +118,5 @@ def modal_mask(x):
 
     valid = torch.abs(2*index-index_r-index_l)<3
     mask = valid * mask1 + ~valid * mask2
+
+    return mask

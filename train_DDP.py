@@ -48,7 +48,7 @@ def get_parser():
     parser.add_argument('--no-cuda', action='store_true', default=False,help='enables CUDA training')
 
     # disparity estimator and loss function
-    parser.add_argument('--estimator',default='mean',help='disparity regression methods',choices=__disparity_estimator__.keys())
+    parser.add_argument('--estimator',default='softargmax',help='disparity regression methods',choices=__disparity_estimator__.keys())
     parser.add_argument('--loss_func',default='SL1',help='loss function',choices=__loss__.keys())
 
 
@@ -86,7 +86,6 @@ def main():
     reset_seed(args.seed)
 
     ## distributed training
-
     ngpus_per_node = torch.cuda.device_count()
     print('ngpus_per_node: {}'.format(ngpus_per_node))
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
@@ -143,8 +142,6 @@ def main_worker(gpu, ngpus_per_node, args):
     else:
         model = torch.nn.DataParallel(model).cuda()
 
-
-
     # dataset, dataloader
     StereoDataset = __datasets__[args.dataset]
     train_dataset = StereoDataset(args.datapath, args.trainlist, True)
@@ -158,7 +155,6 @@ def main_worker(gpu, ngpus_per_node, args):
         train_dataset, 
         batch_size=args.btrain, shuffle=(train_sampler is None), num_workers=4, drop_last=True,
         sampler=train_sampler)
-
 
     if args.loadmodel is not None:
         if args.distributed:
@@ -177,16 +173,9 @@ def main_worker(gpu, ngpus_per_node, args):
             if main_process(args):
                 print('No saved optimizer')
 
-        args.start_epoch = state_dict['epoch'] + 1
-        # args.start_epoch = 0
-        print('start epoch = ',args.start_epoch)
-        
     
     start_time = time.time()
     for epoch in range(args.start_epoch, args.epochs + args.start_epoch):
-
-        # torch.cuda.empty_cache()
-
                 
         if args.distributed:
             train_sampler.set_epoch(epoch)
@@ -201,8 +190,6 @@ def main_worker(gpu, ngpus_per_node, args):
                 total_train_loss += loss
 
     
-
-
         if main_process(args):
             print('\nepoch %d total training loss = %.3f' %(epoch, total_train_loss/len(TrainImgLoader)))
 
@@ -291,7 +278,6 @@ def train(model,optimizer,imgL,imgR,disp_L,args,gpu):
             + 1.0 * loss_func(output3[mask], disp_true[mask],reduction='mean')
 
         
-
     loss.backward()
     optimizer.step()
 

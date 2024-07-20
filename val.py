@@ -43,7 +43,7 @@ parser.add_argument('--loadmodel', help='load the weights from a specific checkp
 parser.add_argument('--seed', type=int, default=1, metavar='S', help='random seed (default: 1)')
 parser.add_argument('--no-cuda', action='store_true', default=False,help='enables CUDA training')
 
-parser.add_argument('--estimator',default='mean',help='disparity regression methods',choices=__disparity_estimator__.keys())
+parser.add_argument('--estimator',default='softargmax',help='disparity regression methods',choices=__disparity_estimator__.keys())
 
 parser.add_argument('--model_name',default='PSMNet',help='log name')
 
@@ -80,57 +80,57 @@ if args.model == 'GANet':
 
 def test(imgL,imgR,disp_true,masknocc=None):
     
-        model.eval()
-  
-        if args.cuda:
-            imgL, imgR, disp_true = imgL.cuda(), imgR.cuda(), disp_true.cuda()
-        if masknocc is not None:
-            masknocc = masknocc.cuda()
-            disp_true[masknocc!=1] = 0
-        mask = (disp_true < args.maxdisp) * (disp_true > 0)
+    model.eval()
 
-        with torch.no_grad():
-            output3 = model(imgL,imgR)
-            output3 = regression(output3)
-            img = torch.squeeze(output3,1)            
+    if args.cuda:
+        imgL, imgR, disp_true = imgL.cuda(), imgR.cuda(), disp_true.cuda()
+    if masknocc is not None:
+        masknocc = masknocc.cuda()
+        disp_true[masknocc!=1] = 0
+    mask = (disp_true < args.maxdisp) * (disp_true > 0)
 
-        if len(disp_true[mask]) == 0:
-            loss = torch.Tensor([0]).cuda()
-            loss_3px = float(0)
-            loss_3px_5 = float(0)
-            loss_1px = float(0)
-            loss_2px = float(0)
-            loss_4px = float(0)
-        else:
-            if args.estimator == 'argmax':
-                img = img.to(torch.float32)
-            loss = F.l1_loss(img[mask],disp_true[mask]) 
-        
-            pred_disp = img.data.cpu()
-            disp_true = disp_true.data.cpu()
+    with torch.no_grad():
+        output3 = model(imgL,imgR)
+        output3 = regression(output3)
+        img = torch.squeeze(output3,1)            
 
-            true_disp = copy.deepcopy(disp_true)
-            index = np.argwhere((true_disp < args.maxdisp) * (true_disp > 0))
+    if len(disp_true[mask]) == 0:
+        loss = torch.Tensor([0]).cuda()
+        loss_3px = float(0)
+        loss_3px_5 = float(0)
+        loss_1px = float(0)
+        loss_2px = float(0)
+        loss_4px = float(0)
+    else:
+        if args.estimator == 'argmax':
+            img = img.to(torch.float32)
+        loss = F.l1_loss(img[mask],disp_true[mask]) 
+    
+        pred_disp = img.data.cpu()
+        disp_true = disp_true.data.cpu()
 
-            pred_disp.reshape(disp_true.size())
+        true_disp = copy.deepcopy(disp_true)
+        index = np.argwhere((true_disp < args.maxdisp) * (true_disp > 0))
 
-            disp_true[index[0][:], index[1][:], index[2][:]] = np.abs(true_disp[index[0][:], index[1][:], index[2][:]]-pred_disp[index[0][:], index[1][:], index[2][:]])
-            correct = (disp_true[index[0][:], index[1][:], index[2][:]] < 3)
-            correct_5 = (disp_true[index[0][:], index[1][:], index[2][:]] < 3)|(disp_true[index[0][:], index[1][:], index[2][:]] < true_disp[index[0][:], index[1][:], index[2][:]]*0.05)
-            loss_3px = 1-(float(torch.sum(correct))/float(len(index[0])))
-            loss_3px_5 = 1-(float(torch.sum(correct_5))/float(len(index[0])))
+        pred_disp.reshape(disp_true.size())
 
-            correct_4 = (disp_true[index[0][:], index[1][:], index[2][:]] < 4)
-            loss_4px = 1-(float(torch.sum(correct_4))/float(len(index[0])))
+        disp_true[index[0][:], index[1][:], index[2][:]] = np.abs(true_disp[index[0][:], index[1][:], index[2][:]]-pred_disp[index[0][:], index[1][:], index[2][:]])
+        correct = (disp_true[index[0][:], index[1][:], index[2][:]] < 3)
+        correct_5 = (disp_true[index[0][:], index[1][:], index[2][:]] < 3)|(disp_true[index[0][:], index[1][:], index[2][:]] < true_disp[index[0][:], index[1][:], index[2][:]]*0.05)
+        loss_3px = 1-(float(torch.sum(correct))/float(len(index[0])))
+        loss_3px_5 = 1-(float(torch.sum(correct_5))/float(len(index[0])))
 
-            correct_2 = (disp_true[index[0][:], index[1][:], index[2][:]] < 2)
-            loss_2px = 1-(float(torch.sum(correct_2))/float(len(index[0])))
+        correct_4 = (disp_true[index[0][:], index[1][:], index[2][:]] < 4)
+        loss_4px = 1-(float(torch.sum(correct_4))/float(len(index[0])))
 
-            correct_1 = (disp_true[index[0][:], index[1][:], index[2][:]] < 1)
-            loss_1px = 1-(float(torch.sum(correct_1))/float(len(index[0])))
+        correct_2 = (disp_true[index[0][:], index[1][:], index[2][:]] < 2)
+        loss_2px = 1-(float(torch.sum(correct_2))/float(len(index[0])))
+
+        correct_1 = (disp_true[index[0][:], index[1][:], index[2][:]] < 1)
+        loss_1px = 1-(float(torch.sum(correct_1))/float(len(index[0])))
 
 
-        return loss.item(), loss_1px, loss_2px, loss_3px, loss_3px_5, loss_4px
+    return loss.item(), loss_1px, loss_2px, loss_3px, loss_3px_5, loss_4px
 
 
 def main():

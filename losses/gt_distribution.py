@@ -8,7 +8,7 @@ import math
 import numpy as np
 
 # groud-truth Laplace distribution
-def LaplaceDisp2Prob(Gt,maxdisp=192,m=3,n=3):
+def LaplaceDisp2Prob(Gt,maxdisp=192,m=1,n=9):
     N,H,W = Gt.shape
     b = 0.8
             
@@ -20,8 +20,6 @@ def LaplaceDisp2Prob(Gt,maxdisp=192,m=3,n=3):
     return F.softmax(cost,dim=1)
 
 
-
-      
 def Adaptive_Multi_Modal_Cross_Entropy_Loss(x,disp,mask,maxdisp,m=1,n=9, top_k=9, epsilon=3, min_samples = 1):
 
     disp[disp>=192] = 0
@@ -48,16 +46,14 @@ def Adaptive_Multi_Modal_Cross_Entropy_Loss(x,disp,mask,maxdisp,m=1,n=9, top_k=9
             else:
                 mask_cluster[:,index,...] = mask_new
     
-
     disp_cluster = torch.mean(disp_unfold_clone.unsqueeze(1).repeat(1,patch_h*patch_w,1,1,1)*mask_cluster, dim=2) * (patch_h*patch_w) / torch.sum(mask_cluster, dim=2).clamp(min=1)
 
     GT = torch.zeros((N, patch_h*patch_w, maxdisp, H, W), device=disp.device)
     for index in range(patch_h*patch_w):
         if index == 0:
-            GT[:,index,...] = LaplaceDisp2Prob(disp,maxdisp,mode=False)
+            GT[:,index,...] = LaplaceDisp2Prob(disp,maxdisp)
         else:
-            GT[:,index,...] = LaplaceDisp2Prob(disp_cluster[:,index,...],maxdisp,mode=False)
-
+            GT[:,index,...] = LaplaceDisp2Prob(disp_cluster[:,index,...],maxdisp)
 
     mask_cluster = torch.sum(mask_cluster, dim=2, keepdim=True)
     mask_cluster[mask_cluster < min_samples] = 0
@@ -65,15 +61,10 @@ def Adaptive_Multi_Modal_Cross_Entropy_Loss(x,disp,mask,maxdisp,m=1,n=9, top_k=9
     w_cluster = 0.2 / (mask_cluster.sum(dim=1, keepdim=True)-1).clamp(min=1) * mask_cluster
     w_cluster[:,0,...] += 0.8 - 0.2 / (mask_cluster.sum(dim=1 ,keepdim=False)-1).clamp(min=1)
 
-    # w_cluster_unlabeled = mask_cluster / mask_cluster.sum(dim=1, keepdim=True).clamp(min=1)
-    # w_cluster = w_cluster * mask[:,None,None,...] + w_cluster_unlabeled * ~mask[:,None,None,...]
-
     top_k_values, top_k_indices = torch.topk(w_cluster, k=top_k, dim=1)
     w_cluster.fill_(0)
     w_cluster.scatter_(dim=1, index=top_k_indices, src=top_k_values)
     w_cluster = w_cluster / w_cluster.sum(dim=1,keepdim=True).clamp(min=1)
-
-    # mask_unlabeled = (mask_cluster.sum(dim=1) > 0).squeeze(1) * ~mask
 
     GT = (GT * w_cluster).sum(dim=1, keepdim=False)
     GT = GT.detach_()
@@ -81,10 +72,6 @@ def Adaptive_Multi_Modal_Cross_Entropy_Loss(x,disp,mask,maxdisp,m=1,n=9, top_k=9
     x = torch.log(x + 1e-30)
     mask = torch.unsqueeze(mask,1).repeat(1,maxdisp,1,1)
 
-    # num_unlabeled = mask_unlabeled.sum()
-    # mask_unlabeled = torch.unsqueeze(mask_unlabeled,1).repeat(1,maxdisp,1,1)
-
-    # loss =  - (GT[mask]*x[mask]).sum() / num     -      0 * (GT[mask_unlabeled]*x[mask_unlabeled]).sum() / num_unlabeled
     loss =  - (GT[mask]*x[mask]).sum() / num
 
     return loss
