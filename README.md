@@ -19,7 +19,7 @@ In addition to the three baselines (PSMNet, GwcNet, and GANet) reported in the p
 |---|---|---|---|
 | | 0.57 | 4.29 | 1.95 |
 
-| KITTI 2015 | D1-fg | D1-bg | D1-all |
+| KITTI 2015 | D1-bg | D1-fg | D1-all |
 |---|---|---|---|
 | |  1.39 | 2.64 | 1.60 |
 
