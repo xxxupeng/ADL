@@ -15,13 +15,15 @@ Despite the great success of deep learning in stereo matching, recovering accura
 ## Additional Experimental Results
 In addition to the three baselines (PSMNet, GwcNet, and GANet) reported in the paper, we also retrained [PCWNet](https://github.com/gallenszl/PCWNet) and tested on the SceneFlow test set and KITTI 2015 benchmark. The results are as follows:
 
-| SceneFlow | EPE | 1px | 3px |
-|---|---|---|---|
-| | 0.57 | 4.29 | 1.95 |
+SceneFlow:
+| EPE | 1px | 3px |
+|---|---|---|
+| 0.57 | 4.29 | 1.95 |
 
-| KITTI 2015 | D1-bg | D1-fg | D1-all |
-|---|---|---|---|
-| |  1.39 | 2.64 | 1.60 |
+KITTI 2015:
+| D1-bg | D1-fg | D1-all |
+|---|---|---|
+|  1.39 | 2.64 | 1.60 |
 
 
 ## Environment
