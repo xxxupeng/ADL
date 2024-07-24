@@ -37,7 +37,7 @@ Pretrained models can be downloaded from [Google Drive](https://drive.google.com
 
 ## Training
 
-We use the distributed data parallel (DDP) to train the model.
+We use the Distributed Data Parallel (DDP) to train the model.
 
 Please execute the bash shell in `./scripts/`, as:
 
@@ -67,6 +67,10 @@ Change `estimator` args. for different disparity estimators:
 - SME: **S**ingle-**M**odal disparity **E**stimator
 - DME: **D**ominant-**M**odal disparity **E**stimator
 
+
+## To Do List
+Currently, the code of dataloader and evaluation are based on [PSMNet](https://github.com/JiaRenChang/PSMNet), and DDP is based on [DSGN](https://github.com/dvlab-research/DSGN). A convenient `stereo toolbox` is coming soon to support multiple dataloaders, stereo backbones, loss functions, disparity estimators, and the performance or generalization evaluation, with just a few lines of code.
+
 ## Citation
 ```
 @InProceedings{Xu_2024_CVPR,
@@ -81,4 +85,4 @@ Change `estimator` args. for different disparity estimators:
 
 ## Acknowledgement
 
-This project is based on the [PSMNet](https://github.com/JiaRenChang/PSMNet), [GwcNet](https://github.com/xy-guo/GwcNet), and [GANet](https://github.com/feihuzhang/GANet), we thank the original authors for their excellent works.
+This project is based on the [PSMNet](https://github.com/JiaRenChang/PSMNet), [GwcNet](https://github.com/xy-guo/GwcNet), [GANet](https://github.com/feihuzhang/GANet), and [DSGN](https://github.com/dvlab-research/DSGN), we thank the original authors for their excellent works.
