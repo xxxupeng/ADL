@@ -57,7 +57,7 @@ If you want to train the GANet, please install the [NVIDIA-Apex package](https:/
 
 ## Evaluation
 
-Please uncomment and execute `val.py`.
+Please uncomment and execute `val.py` in the shell scripts.
 
 `EPE`, `1px`, `2px`, `3px`, `D1`, `4px`, `speed` are reported.
 
